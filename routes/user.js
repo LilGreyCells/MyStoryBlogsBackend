@@ -1,7 +1,9 @@
 var express = require('express')
 var router = express.Router()
 var User = require('../models/User')
-// var db = require('../models');
+const jwt = require('jsonwebtoken')
+const dotenv = require('dotenv')
+dotenv.config()
 var bcrypt = require('bcrypt')
 const saltRounds = 10
 
@@ -37,7 +39,14 @@ router.post('/login', async function (req, res, next) {
       } else {
         bcrypt.compare(inputPassword, profile.password, function (err, result) {
           if (result === true) {
-            res.send('User authenticated.')
+            const token = jwt.sign(
+              { userName: inputUserName },
+              process.env.TOKEN_SECRET,
+              {
+                expiresIn: '59m',
+              }
+            )
+            res.json(token)
           } else {
             res.send('User unauthorized')
           }

@@ -13,5 +13,9 @@ const UserSchema = mongoose.Schema({
     type: String,
     require: true,
   },
+  bio: {
+    type: String,
+    require: false,
+  },
 })
 module.exports = User = mongoose.model('UserSchema', UserSchema)
