@@ -2,21 +2,27 @@ var express = require('express')
 var router = express.Router()
 var User = require('../models/User')
 const jwt = require('jsonwebtoken')
-
+const { ErrorHandler } = require('../helpers/errorHandler')
 
 router.get('/', authenticateToken, async function (req, res, next) {
   // return/send username, name, bio, picture
-  console.log(req.userid)
-  var profile = {
-    userName: req.userid.userid,
-  }
-  await User.findOne({ _id: req.userid.userid }).then((user) => {
-    profile['name'] = user.name
-    profile['bio'] = user.bio
-    profile['myPosts'] = user.myPosts
-  })
+  var profile = {}
+  try {
+    await User.findOne({ _id: req.userid.userid })
+      .then((user) => {
+        profile['userName'] = user.userName
+        profile['name'] = user.name
+        profile['bio'] = user.bio
+        profile['myPosts'] = user.myPosts
 
-  res.json(profile)
+        res.json(profile)
+      })
+      .catch((err) => {
+        throw new ErrorHandler(303, 'signUp')
+      })
+  } catch (err) {
+    next(err)
+  }
 })
 
 function authenticateToken(req, res, next) {
@@ -26,10 +32,15 @@ function authenticateToken(req, res, next) {
   if (token == null) return res.sendStatus(401) // if there isn't any token
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, userid) => {
-    console.log(err)
-    if (err) return res.sendStatus(403)
-    req.userid=userid
-    next() // pass the execution off to whatever request the client intended
+    try {
+      if (err) {
+        throw new ErrorHandler(303, 'signUp')
+      }
+      req.userid = userid
+      next()
+    } catch (err) {
+      next(err) // pass the execution off to whatever request the client intended
+    }
   })
 }
 
