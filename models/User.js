@@ -8,6 +8,7 @@ const UserSchema = mongoose.Schema({
   userName: {
     type: String,
     require: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -17,5 +18,9 @@ const UserSchema = mongoose.Schema({
     type: String,
     require: false,
   },
+  postIds:{
+    type:Array,
+    require:false,
+  }
 })
 module.exports = User = mongoose.model('UserSchema', UserSchema)
