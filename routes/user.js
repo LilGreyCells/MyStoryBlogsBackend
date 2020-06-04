@@ -18,7 +18,7 @@ router.post('/signUp', function (req, res, next) {
       await newUser
         .save()
         .then(() => {
-          res.status(200).json(makeToken(newUser._id))
+          res.status(200).json(routerhelper.makeToken(newUser._id))
         })
         .catch((e) => {
           next(new ErrorHandler(401, 'Username is already taken'))
@@ -54,7 +54,31 @@ router.post('/login', async function (req, res, next) {
         }
       })
       .catch((err) => {
+        if (err instanceof ErrorHandler){
+          throw err
+        }
         throw new ErrorHandler(404, 'Something went wrong')
+      })
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.get('/profile', routerhelper.authenticateToken, async function (req, res, next) {
+  // return/send username, name, bio, picture
+  var profile = {}
+  try {
+    await User.findOne({ _id: req.userid.userid })
+      .then((user) => {
+        profile['userName'] = user.userName
+        profile['name'] = user.name
+        profile['bio'] = user.bio
+        profile['myPosts'] = user.myPosts
+
+        res.json(profile)
+      })
+      .catch((err) => {
+        throw new ErrorHandler(303, 'signUp')
       })
   } catch (err) {
     next(err)

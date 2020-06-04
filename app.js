@@ -6,7 +6,6 @@ var logger = require('morgan')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/user')
-var profile = require('./routes/profile')
 const dotenv = require('dotenv')
 dotenv.config()
 var app = express()
@@ -40,7 +39,6 @@ app.use(cookieParser())
 
 app.use('/', indexRouter)
 app.use('/user', usersRouter)
-app.use('/profile', profile)
 
 // error handler
 app.use((err, req, res, next) => {
