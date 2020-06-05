@@ -3,24 +3,24 @@ var mongoose = require('mongoose')
 const BlogSchema = mongoose.Schema({
   title: {
     type: String,
-    require: true,
+    required: true,
   },
   authorName: {
     type: String,
-    require: true,
+    required: true,
   
   },
   authorId:{
-type:Number,
-require:true,
+type:String,
+required:true,
   },
   description: {
     type: String,
-    require: false,
+    required: false,
   },
   postIds:{
     type:Array,
-    require:false,
+    required:false,
   }
 })
 module.exports = Blog = mongoose.model('BlogSchema', BlogSchema)

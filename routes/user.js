@@ -18,7 +18,7 @@ router.post('/signUp', function (req, res, next) {
       await newUser
         .save()
         .then(() => {
-          res.status(200).json(routerhelper.makeToken(newUser._id))
+          res.status(200).json(routerhelper.makeToken(newUser._id,newUser.name))
         })
         .catch((e) => {
           next(new ErrorHandler(401, 'Username is already taken'))
@@ -46,7 +46,7 @@ router.post('/login', async function (req, res, next) {
             result
           ) {
             if (result === true) {
-              res.status(200).json(routerhelper.makeToken(profile._id))
+              res.status(200).json(routerhelper.makeToken(profile._id,profile.name))
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -68,7 +68,7 @@ router.get('/profile', routerhelper.authenticateToken, async function (req, res,
   // return/send username, name, bio, picture
   var profile = {}
   try {
-    await User.findOne({ _id: req.userid.userid })
+    await User.findOne({ _id: req.body.userid})
       .then((user) => {
         profile['userName'] = user.userName
         profile['name'] = user.name
