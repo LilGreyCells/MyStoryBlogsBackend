@@ -18,9 +18,9 @@ const UserSchema = mongoose.Schema({
     type: String,
     require: false,
   },
-  postIds:{
-    type:Array,
-    require:false,
-  }
+  postIds: {
+    type: Array,
+    require: false,
+  },
 })
-module.exports = User = mongoose.model('UserSchema', UserSchema)
+module.exports = mongoose.model('UserSchema', UserSchema)

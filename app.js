@@ -6,11 +6,12 @@ var logger = require('morgan')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/user')
+var postsRouter = require('./routes/post')
 const dotenv = require('dotenv')
 dotenv.config()
 var app = express()
 var mongoose = require('mongoose')
-const {ErrorHandler } = require('./helpers/errorHandler')
+const { ErrorHandler } = require('./helpers/errorHandler')
 
 // Connecting to the database
 mongoose
@@ -21,10 +22,13 @@ mongoose
     }
   )
   .then(() => {
-    console.log('Database is connected')
+    console.log('Connected to the Database.')
   })
   .catch((err) => {
-    console.log('Error in connecting to database:  ', err.message)
+    console.log(
+      'There was an error with connecting to the database:  ',
+      err.message
+    )
   })
 
 // view engine setup
@@ -39,11 +43,12 @@ app.use(cookieParser())
 
 app.use('/', indexRouter)
 app.use('/user', usersRouter)
+app.use('/post', postsRouter)
 
 // error handler
 app.use((err, req, res, next) => {
   console.log(err)
   err.handleError(res)
-});
+})
 
 module.exports = app
