@@ -13,6 +13,9 @@ var helper={
       
 },
 
+//TODO: ADD BOTH ID AND NAME TO THE 'REQUEST BODY' NOT 'THE REQUEST'.
+//TODO: CHECK FOR WHETHER SIGNED OUT TOKEN OR NOT BY POLLING THE DB.
+
 authenticateToken:(req, res, next)=> {
   // Gather the jwt access token from the request header
   const authHeader = req.headers['authorization']
