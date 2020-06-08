@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var routerhelper = require('../helpers/routerhelper')
-var Post = require('../models/Post')
+var postcontroller = require()
 
 // Get Posts from Database
 router.get('/', routerhelper.authenticateToken, async function (
@@ -10,9 +10,8 @@ router.get('/', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    await Post.find({}).then((posts) => {
-      res.json(posts)
-    })
+    var post = postcontroller.get(req)
+    res.json(post)
   } catch (err) {
     throw new ErrorHandler(404, 'Unable to find posts')
   }
@@ -25,18 +24,19 @@ router.post('/', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    var newPost = new Post({
-      authorName: req.body.authorName,
-      blogId: req.body.blogId,
-      postTitle: req.body.postTitle,
-      timestamp: req.body.timestamp,
-      keywords: req.body.keywords,
-      views: req.body.views,
-    })
-    await newPost.save().then(res.json(newPost))
+    var newPost = postcontroller.post(req, res, next)
+    res.status(200).json(newPost)
   } catch (err) {
-    throw new ErrorHandler(500, 'Unable to save post.')
+    new ErrorHandler(404, 'Either Post Title or Authorname not provided')
   }
+})
+
+// Edit Posts in Database
+router.put('/', router.authenticateToken, async function (req, res, next) {
+  try {
+    var updatedPost = postcontroller.update(req, res, next)
+    res.status(200).json(updatedPost)
+  } catch (err) {}
 })
 
 // Delete Post from Database
@@ -45,12 +45,7 @@ router.delete('/:id', router.authenticateToken, async function (
   res,
   next
 ) {
-  try {
-    var postId = req.body._id
-    await Post.findOne({ _id: postId }).then((result) => res.send(result))
-  } catch (err) {
-    console.log(err)
-  }
+  postcontroller.delete(req, res, next)
 })
 
 module.exports = router
