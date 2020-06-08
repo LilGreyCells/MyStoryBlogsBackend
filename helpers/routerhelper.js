@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken')
 const { ErrorHandler } = require('../helpers/errorHandler')
 var helper={
-     makeToken:(userid)=>{
+     makeToken:(authorId,authorName)=>{
     const tokenstring = jwt.sign(
-        { userid: userid },
+        { authorId: authorId,
+        authorName: authorName},
         process.env.TOKEN_SECRET,
         {
           expiresIn: '43200m',
@@ -24,12 +25,14 @@ authenticateToken:(req, res, next)=> {
     throw new ErrorHandler(400,"Token not provided. Unauthorized access.")
   } // if there isn't any token
 
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, userid) => {
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, userinfo) => {
     try {
       if (err) {
         throw new ErrorHandler(303, 'signUp')
       }
-      req.userid = userid
+      console.log(userinfo)
+      req.body.authorId = userinfo.authorId
+      req.body.authorName=userinfo.authorName
       next()
     } catch (err) {
       next(err) // pass the execution off to whatever request the client intended

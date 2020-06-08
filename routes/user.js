@@ -11,16 +11,17 @@ router.post('/signUp', function (req, res, next) {
   try {
     bcrypt.hash(req.body.password, saltRounds, async function (err, hash) {
       var newUser = new User({
-        name: req.body.name,
         userName: req.body.userName,
+        authorName: req.body.authorName,
         password: hash,
       })
       await newUser
         .save()
         .then(() => {
-          res.status(200).json(routerhelper.makeToken(newUser._id))
+          res.status(200).json(routerhelper.makeToken(newUser._id,newUser.authorName))
         })
         .catch((e) => {
+          console.log(e)
           next(new ErrorHandler(401, 'Username is already taken'))
         })
     })
@@ -46,7 +47,7 @@ router.post('/login', async function (req, res, next) {
             result
           ) {
             if (result === true) {
-              res.status(200).json(routerhelper.makeToken(profile._id))
+              res.status(200).json(routerhelper.makeToken(profile._id,profile.authorName))
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -67,14 +68,15 @@ router.post('/login', async function (req, res, next) {
 router.get('/profile', routerhelper.authenticateToken, async function (req, res, next) {
   // return/send username, name, bio, picture
   var profile = {}
+  console.log(req.body)
   try {
-    await User.findOne({ _id: req.userid.userid })
+    await User.findOne({ _id: req.body.authorId})
       .then((user) => {
-        profile['userName'] = user.userName
-        profile['name'] = user.name
+        profile['authorName'] = user.authorName
+        profile['username'] = user.userName
         profile['bio'] = user.bio
         profile['myPosts'] = user.myPosts
-
+        console.log(profile)
         res.json(profile)
       })
       .catch((err) => {
