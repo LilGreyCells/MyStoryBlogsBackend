@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken')
 const { ErrorHandler } = require('../helpers/errorHandler')
 var helper={
-     makeToken:(userid,name)=>{
+     makeToken:(authorId,authorName)=>{
     const tokenstring = jwt.sign(
-        { userid: userid,
-        name: name},
+        { authorId: authorId,
+        authorName: authorName},
         process.env.TOKEN_SECRET,
         {
           expiresIn: '43200m',
@@ -30,9 +30,9 @@ authenticateToken:(req, res, next)=> {
       if (err) {
         throw new ErrorHandler(303, 'signUp')
       }
-      
-      req.body.userid = userinfo.userid
-      req.body.name=userinfo.name
+      console.log(userinfo)
+      req.body.authorId = userinfo.authorId
+      req.body.authorName=userinfo.authorName
       next()
     } catch (err) {
       next(err) // pass the execution off to whatever request the client intended

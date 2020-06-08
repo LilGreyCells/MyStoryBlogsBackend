@@ -7,7 +7,9 @@ var routerhelper = require('../helpers/routerhelper')
 /* GET blogs based on params. */
 router.get('/', async function (req, res, next) {
   try {
-    blog = blogcontroller.get(req)
+    blog = await blogcontroller.get(req)
+    if(!blog)
+    {throw new ErrorHandler(404,"The blog does not exist")}
     res.status(200).json(blog)
   }
 
@@ -38,10 +40,6 @@ router.post('/', routerhelper.authenticateToken,async function (req, res, next) 
   try {
     result = blogcontroller.post(req)
     await result.then((result)=>res.status(200).json(result)).catch((err)=>{throw new ErrorHandler(404, 'Missing title or description' + err)})
-    
- 
-
-  
   }
 
   catch (err) {
@@ -52,10 +50,12 @@ router.post('/', routerhelper.authenticateToken,async function (req, res, next) 
 
 /*DELETE the blog based on params*/
 router.delete('/', routerhelper.authenticateToken, async function (req, res, next) {
-  try { blog=blogcontroller.delete(req, res, next)
+  try { blog=await blogcontroller.delete(req, res, next)
   if (blog.postIds && blog.postIds.length>0){
-    //delete from post the posts in this blog.
+    //TODO: delete from post the posts in this blog.
+
   }
+  res.status(200).json(blog)
   }
   catch (err) {
     if (err instanceof ErrorHandler) {
@@ -69,7 +69,8 @@ router.delete('/', routerhelper.authenticateToken, async function (req, res, nex
 /*PUT updated information in the blog based on params*/
 router.put('/', routerhelper.authenticateToken, async function (req, res, next) {
   try {
-    result = blogcontroller.update(req, res, next)
+    result = await blogcontroller.update(req, res, next)
+    //TODO: POST USES THIS CONTROLLER TO DELETE A POSTID ONCE POST IS DELETED
     res.status(200).json(result)
   }
   catch (err) {
