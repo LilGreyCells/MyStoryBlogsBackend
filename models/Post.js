@@ -5,6 +5,10 @@ const PostSchema = mongoose.Schema({
     type: String,
     require: true,
   },
+  postId: {
+    type: String,
+    require: true,
+  },
   blogId: {
     type: String,
     require: false,

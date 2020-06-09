@@ -1,29 +1,21 @@
 var Blog = require('../models/Blogs')
+
 const blogmethods = {
   get: async (req) => {
-   console.log(req.body)
-    return Blog.findOne({_id:req.body.blogid})
-  }
-  ,
-  update: async (req) => {
-
-   
-    await Blog.updateOne({blogid:req.body.blogid},req.body)
-   return Blog.findOne({blogid:req.body.blogid})
-  
-
-
+    console.log(req.body)
+    return Blog.findOne(req.body)
   },
-  post:  (req) => {
-  
-      var newblog = new Blog(req.body)
-     return newblog.save() 
-  
-},
-delete: async (req) => {
-    return Blog.deleteOne({_id:req.body.blogid })
-    
-  
-}
+  update: async (req) => {
+    await Blog.updateOne({ blogId: req.body.blogId }, req.body)
+    return Blog.findOne({ blogId: req.body.blogId })
+  },
+  post: (req) => {
+    var newblog = new Blog(req.body)
+    newblog['blogId'] = newblog._id
+    return newblog.save()
+  },
+  delete: async (req) => {
+    return Blog.deleteOne({ blogId: req.body.blogId })
+  },
 }
 module.exports = blogmethods

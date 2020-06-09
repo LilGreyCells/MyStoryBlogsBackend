@@ -15,10 +15,13 @@ router.post('/signUp', function (req, res, next) {
         authorName: req.body.authorName,
         password: hash,
       })
+      newUser['authorId'] = newUser._id
       await newUser
         .save()
         .then(() => {
-          res.status(200).json(routerhelper.makeToken(newUser._id,newUser.authorName))
+          res
+            .status(200)
+            .json(routerhelper.makeToken(newUser._id, newUser.authorName))
         })
         .catch((e) => {
           console.log(e)
@@ -47,7 +50,9 @@ router.post('/login', async function (req, res, next) {
             result
           ) {
             if (result === true) {
-              res.status(200).json(routerhelper.makeToken(profile._id,profile.authorName))
+              res
+                .status(200)
+                .json(routerhelper.makeToken(profile._id, profile.authorName))
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -55,7 +60,7 @@ router.post('/login', async function (req, res, next) {
         }
       })
       .catch((err) => {
-        if (err instanceof ErrorHandler){
+        if (err instanceof ErrorHandler) {
           throw err
         }
         throw new ErrorHandler(404, 'Something went wrong')
@@ -65,12 +70,16 @@ router.post('/login', async function (req, res, next) {
   }
 })
 
-router.get('/profile', routerhelper.authenticateToken, async function (req, res, next) {
+router.get('/profile', routerhelper.authenticateToken, async function (
+  req,
+  res,
+  next
+) {
   // return/send username, name, bio, picture
   var profile = {}
   console.log(req.body)
   try {
-    await User.findOne({ _id: req.body.authorId})
+    await User.findOne({ _id: req.body.authorId })
       .then((user) => {
         profile['authorName'] = user.authorName
         profile['username'] = user.userName
