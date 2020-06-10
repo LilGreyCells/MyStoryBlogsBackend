@@ -21,7 +21,7 @@ router.post('/signUp', function (req, res, next) {
         .then(() => {
           res
             .status(200)
-            .json(routerhelper.makeToken(newUser._id, newUser.authorName))
+            .json(routerhelper.makeToken(newUser.authorId, newUser.authorName))
         })
         .catch((e) => {
           console.log(e)
@@ -52,7 +52,7 @@ router.post('/login', async function (req, res, next) {
             if (result === true) {
               res
                 .status(200)
-                .json(routerhelper.makeToken(profile._id, profile.authorName))
+                .json(routerhelper.makeToken(profile.authorId, profile.authorName))
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -79,7 +79,7 @@ router.get('/profile', routerhelper.authenticateToken, async function (
   var profile = {}
   console.log(req.body)
   try {
-    await User.findOne({ _id: req.body.authorId })
+    await User.findOne(req.body)
       .then((user) => {
         profile['authorName'] = user.authorName
         profile['username'] = user.userName
