@@ -11,16 +11,16 @@ const PostSchema = mongoose.Schema({
   },
   blogId: {
     type: String,
-    require: false,
+    require: true,
   },
   postTitle: {
     type: String,
     require: true,
   },
-  timestamp: {
-    type: String,
-    require: true,
-  },
+  // timestamp: {
+  //   type: String,
+  //   require: true,
+  // },
   keywords: {
     type: Array,
     require: false,

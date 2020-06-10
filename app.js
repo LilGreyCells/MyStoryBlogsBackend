@@ -44,8 +44,8 @@ app.use(cookieParser())
 
 app.use('/', indexRouter)
 app.use('/user', usersRouter)
-// app.use('/post', postsRouter)
 app.use('/blog', blogsRouter)
+app.use('/post', postsRouter)
 
 // error handler
 app.use((err, req, res, next) => {
