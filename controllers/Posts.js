@@ -1,6 +1,8 @@
 var Post = require('../models/Post')
+var Blog = require('../models/Blogs')
 const { ErrorHandler } = require('../helpers/errorHandler')
 var routerhelper = require('../helpers/routerhelper')
+
 const postmethods = {
   get: (req) => {
     return Post.findOne({ postId: req.postId })
@@ -32,42 +34,21 @@ const postmethods = {
     }
   },
 
-  // update:(req,res,next)=>{
-  //     try{
-  //         var post_id={_id:req.body._id}
-  //         post =  await Post.findOne({
-  //           post_id
-  //         })
-  //       if(!post){
-  //         throw new ErrorHandler(404, 'The requested post does not exist')
-  //       }
-  //       const update={}
-  //       if(req.body.postTitle)
-  //       {update.postTitle=req.body.postTitle
+  update: async (req, res, next) => {
+    try {
+      await Post.updateOne({ postId: req.body.postId }, req.body)
+      return await Post.findOne({ postId: req.body.postId })
+    } catch (err) {
+      next(err)
+    }
+  },
 
-  //     }
-
-  //           await post.updateOne(update);
-
-  //           const updatedDoc = await Post.findOne(post_id);
-  //         res.status(200).json(updatedDoc)
-
-  //       }
-  //       catch(err){
-  //         if (err instanceof ErrorHandler){
-  //             next(err)
-  //           }
-  //           next(new ErrorHandler(404, 'Something went wrong '+err))
-  //         }
-  // },
-
-  // delete: (req, res, next) => {
-  //   // try {
-  //   //   var postId = req.body._id
-  //   //   await Post.findOne({ _id: postId }).then((result) => res.send(result))
-  //   // } catch (err) {
-  //   //   console.log(err)
-  //   // }
-  // }
+  delete: (req, res, next) => {
+    try {
+      return Post.deleteOne({ postId: req.body.postId })
+    } catch (err) {
+      console.log(err)
+    }
+  },
 }
 module.exports = postmethods
