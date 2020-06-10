@@ -2,7 +2,6 @@ var Blog = require('../models/Blogs')
 
 const blogmethods = {
   get: async (req) => {
-    console.log(req.body)
     return Blog.findOne(req.body)
   },
   update: async (req) => {
