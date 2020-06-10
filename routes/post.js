@@ -27,7 +27,9 @@ router.post('/', routerhelper.authenticateToken, async function (
 ) {
   try {
     var newPost = postcontroller.post(req, res, next)
-    req = { body: newPost.postId, type: 'add' }
+    req = {
+      body: { $push: { postIds: newPost.postId }, blogId: newPost.blogId },
+    }
     blogcontroller.update(req, res, next)
 
     res.status(200).json(newPost)
