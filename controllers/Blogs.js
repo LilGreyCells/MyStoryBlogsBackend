@@ -5,11 +5,6 @@ const blogmethods = {
     return Blog.findOne(req.body)
   },
   update: async (req) => {
-    if (req.type) {
-      console.log('YESSSS')
-    } else {
-      console.log('NOOOO')
-    }
     await Blog.updateOne({ blogId: req.body.blogId }, req.body)
     return Blog.findOne({ blogId: req.body.blogId })
   },

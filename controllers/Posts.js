@@ -9,46 +9,26 @@ const postmethods = {
   },
 
   post: (req, res, next) => {
-    try {
-      var newPost = new Post({
-        title: req.body.postTitle,
-        authorName: req.body.authorName,
-        blogId: req.body.blogId,
-        postTitle: req.body.postTitle,
-        // timestamp: req.body.timestamp,
-        keywords: req.body.keywords,
-        views: req.body.views,
-      })
-      newPost['postId'] = newPost._id
-      newPost
-        .save()
-        .then(() => {
-          return newPost
-        })
-        .catch((err) => {
-          next(err)
-        })
-    } catch (err) {
-      console.log(err)
-      next(err)
-    }
+    var newPost = new Post({
+      title: req.body.postTitle,
+      authorName: req.body.authorName,
+      blogId: req.body.blogId,
+      postTitle: req.body.postTitle,
+      // timestamp: req.body.timestamp,
+      keywords: req.body.keywords,
+      views: req.body.views,
+    })
+    newPost['postId'] = newPost._id
+    return newPost.save()
   },
 
   update: async (req, res, next) => {
-    try {
-      await Post.updateOne({ postId: req.body.postId }, req.body)
-      return await Post.findOne({ postId: req.body.postId })
-    } catch (err) {
-      next(err)
-    }
+    await Post.updateOne({ postId: req.body.postId }, req.body)
+    return Post.findOne({ postId: req.body.postId })
   },
 
-  delete: (req, res, next) => {
-    try {
-      return Post.deleteOne({ postId: req.body.postId })
-    } catch (err) {
-      console.log(err)
-    }
+  delete: async (req) => {
+    return Post.findOneAndDelete({ postId: req.body.postId })
   },
 }
 module.exports = postmethods
