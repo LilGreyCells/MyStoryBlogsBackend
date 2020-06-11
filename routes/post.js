@@ -26,10 +26,11 @@ router.post('/', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    var newPost = postcontroller.post(req, res, next)
-    req = { body: newPost.postId, type: 'add' }
-    blogcontroller.update(req, res, next)
-
+    var newPost = await postcontroller.post(req, res, next)
+    req = {
+      body: { $push: { postIds: newPost.postId }, blogId: newPost.blogId },
+    }
+    await blogcontroller.update(req, res, next)
     res.status(200).json(newPost)
   } catch (err) {
     new ErrorHandler(404, 'Either Post Title or Authorname not provided')
@@ -60,10 +61,15 @@ router.delete('/', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    var post = await postcontroller.delete(req, res, next)
-    req = { body: post.postId, type: 'delete' }
-    blogcontroller.update(req, res, next)
-    res.status(200).json(post)
+    var deletedPost = await postcontroller.delete(req, res, next)
+    req = {
+      body: {
+        $pull: { postIds: deletedPost.postId },
+        blogId: deletedPost.blogId,
+      },
+    }
+    await blogcontroller.update(req, res, next)
+    res.status(200).json(deletedPost)
   } catch (err) {
     if (err instanceof ErrorHandler) {
       next(err)
