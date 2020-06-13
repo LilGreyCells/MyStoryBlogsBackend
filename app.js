@@ -13,11 +13,12 @@ dotenv.config()
 var app = express()
 var mongoose = require('mongoose')
 const { ErrorHandler } = require('./helpers/errorHandler')
+const helmet = require('helmet')
 
 // Connecting to the database
 mongoose
   .connect(
-    'mongodb+srv://user1:user1@cluster0-7zuhg.mongodb.net/BlogsDB?retryWrites=true&w=majority',
+    process.env.MONGO_DB_CONNECTION_STRING,
     {
       useNewUrlParser: true,
     }
@@ -35,7 +36,7 @@ mongoose
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'))
 // app.set('view engine', 'jade')
-
+app.use(helmet())
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
