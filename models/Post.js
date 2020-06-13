@@ -17,10 +17,10 @@ const PostSchema = mongoose.Schema({
     type: String,
     require: true,
   },
-  postText:{
+  postText: {
     type: String,
     require: false,
-  }
+  },
   // timestamp: {
   //   type: String,
   //   require: true,
