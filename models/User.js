@@ -26,5 +26,9 @@ const UserSchema = mongoose.Schema({
     type: Array,
     require: false,
   },
+  tokens: {
+    type: Array,
+    require: false,
+  },
 })
 module.exports = mongoose.model('UserSchema', UserSchema)
