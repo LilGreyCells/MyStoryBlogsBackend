@@ -32,9 +32,14 @@ router.post('/signUp', function (req, res, next) {
             req.body.authorName
           )
 
-          res.cookie('refreshTokenCookie', refreshToken,{httpOnly: true})
-          res.cookie('accessTokenCookie', accessToken,{httpOnly: true})
-         
+          res.cookie('refreshTokenCookie', refreshToken, {
+            httpOnly: true,
+            secure: true,
+          })
+          res.cookie('accessTokenCookie', accessToken, {
+            httpOnly: true,
+            secure: true,
+          })
 
           await User.updateOne(
             { authorId: newUser.authorId },
@@ -78,8 +83,14 @@ router.post('/login', async function (req, res, next) {
                 profile.authorId,
                 profile.authorName
               )
-              res.cookie('refreshTokenCookie', refreshToken,{httpOnly: true})
-              res.cookie('accessTokenCookie', accessToken,{httpOnly: true})
+              res.cookie('refreshTokenCookie', refreshToken, {
+                httpOnly: true,
+                secure: true,
+              })
+              res.cookie('accessTokenCookie', accessToken, {
+                httpOnly: true,
+                secure: true,
+              })
 
               await User.updateOne(
                 { userName: profile.userName },
@@ -132,8 +143,8 @@ router.get('/profile', routerhelper.authenticateToken, async function (
 })
 
 router.get('/refreshToken', function (req, res, next) {
-  if (req.cookies.refreshTokenCookie==undefined){
-    throw new ErrorHandler(303,"login")
+  if (req.cookies.refreshTokenCookie == undefined) {
+    throw new ErrorHandler(303, 'login')
   }
   var refreshToken = req.cookies.refreshTokenCookie.token
   jwt.verify(
@@ -153,8 +164,11 @@ router.get('/refreshToken', function (req, res, next) {
           userinfo.authorId,
           req.body.authorName
         )
-   
-        res.cookie('accessTokenCookie', accessToken,{httpOnly: true})
+
+        res.cookie('accessTokenCookie', accessToken, {
+          httpOnly: true,
+          secure: true,
+        })
         res.send()
       } else {
         throw new ErrorHandler(401, 'Token has expired.')

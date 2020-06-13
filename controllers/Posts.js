@@ -14,6 +14,7 @@ const postmethods = {
       authorName: req.body.authorName,
       blogId: req.body.blogId,
       postTitle: req.body.postTitle,
+      postText: req.body.postText,
       // timestamp: req.body.timestamp,
       keywords: req.body.keywords,
       views: req.body.views,
