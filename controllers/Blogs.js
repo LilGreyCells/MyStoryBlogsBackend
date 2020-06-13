@@ -14,7 +14,7 @@ const blogmethods = {
     return newblog.save()
   },
   delete: async (req) => {
-    return Blog.deleteOne({ blogId: req.body.blogId })
+    return Blog.findOneAndDelete({ blogId: req.body.blogId })
   },
 }
 module.exports = blogmethods

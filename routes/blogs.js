@@ -60,11 +60,13 @@ router.delete('/', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    blog = await blogcontroller.delete(req, res, next)
+    blog = await blogcontroller.delete(req)
+    console.log(blog)
     if (blog.postIds && blog.postIds.length > 0) {
-      blog.postIds.forEach(element => {
+      blog.postIds.forEach(async element => {
+        console.log(element)
         let req={body:{postId:element}}
-        postcontroller.delete(req)
+        await postcontroller.delete(req)
       });
     }
     res.status(200).json(blog)
