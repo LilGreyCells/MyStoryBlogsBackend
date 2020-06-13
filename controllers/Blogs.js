@@ -14,6 +14,7 @@ const blogmethods = {
     return newblog.save()
   },
   delete: async (req) => {
+    console.log(req)
     return Blog.deleteOne({ blogId: req.body.blogId })
   },
 }

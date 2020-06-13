@@ -4,7 +4,10 @@ var User = require('../models/User')
 const { ErrorHandler } = require('../helpers/errorHandler')
 var routerhelper = require('../helpers/routerhelper')
 var bcrypt = require('bcrypt')
+const { token } = require('morgan')
+const { JsonWebTokenError } = require('jsonwebtoken')
 const saltRounds = 10
+const jwt = require('jsonwebtoken')
 
 /* GET users listing. */
 router.post('/signUp', function (req, res, next) {
@@ -14,14 +17,30 @@ router.post('/signUp', function (req, res, next) {
         userName: req.body.userName,
         authorName: req.body.authorName,
         password: hash,
+        tokens: [],
       })
       newUser['authorId'] = newUser._id
       await newUser
         .save()
-        .then(() => {
-          res
-            .status(200)
-            .json(routerhelper.makeToken(newUser.authorId, newUser.authorName))
+        .then(async () => {
+          var refreshToken = routerhelper.makeRefreshToken(
+            newUser.authorId,
+            req.body.authorName
+          )
+          var accessToken = routerhelper.makeAccessToken(
+            newUser.authorId,
+            req.body.authorName
+          )
+
+          res.cookie('refreshTokenCookie', refreshToken)
+          res.cookie('accessTokenCookie', accessToken)
+
+          await User.updateOne(
+            { authorId: newUser.authorId },
+            { $push: { tokens: refreshToken.token } }
+          )
+
+          res.status(200).send()
         })
         .catch((e) => {
           console.log(e)
@@ -37,7 +56,7 @@ router.post('/login', async function (req, res, next) {
   try {
     var inputUserName = req.body.userName
     var inputPassword = req.body.password
-    console.log(process.env.TOKEN_SECRET)
+
     await User.findOne({
       userName: inputUserName,
     })
@@ -45,14 +64,29 @@ router.post('/login', async function (req, res, next) {
         if (!profile) {
           throw new ErrorHandler(401, 'Username does not exist')
         } else {
-          bcrypt.compare(inputPassword, profile.password, function (
+          bcrypt.compare(inputPassword, profile.password, async function (
             err,
             result
           ) {
             if (result === true) {
-              res
-                .status(200)
-                .json(routerhelper.makeToken(profile.authorId, profile.authorName))
+              var refreshToken = routerhelper.makeRefreshToken(
+                profile.authorId,
+                profile.authorName
+              )
+              var accessToken = routerhelper.makeAccessToken(
+                profile.authorId,
+                profile.authorName
+              )
+
+              res.cookie('refreshTokenCookie', refreshToken)
+              res.cookie('accessTokenCookie', accessToken)
+
+              await User.updateOne(
+                { userName: profile.userName },
+                { $push: { tokens: refreshToken.token } }
+              )
+
+              res.status(200).json({ message: 'User is logged in!' })
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -77,10 +111,10 @@ router.get('/profile', routerhelper.authenticateToken, async function (
 ) {
   // return/send username, name, bio, picture
   var profile = {}
-  console.log(req.body)
   try {
     await User.findOne(req.body)
       .then((user) => {
+        console.log('user: ', user)
         profile['authorName'] = user.authorName
         profile['username'] = user.userName
         profile['bio'] = user.bio
@@ -89,6 +123,7 @@ router.get('/profile', routerhelper.authenticateToken, async function (
         res.json(profile)
       })
       .catch((err) => {
+        console.log('errrrrrooooooooooo: ', err)
         throw new ErrorHandler(303, 'signUp')
       })
   } catch (err) {
@@ -96,4 +131,48 @@ router.get('/profile', routerhelper.authenticateToken, async function (
   }
 })
 
+router.get('/refreshToken', function (req, res, next) {
+  var refreshToken = req.cookies.refreshTokenCookie.token
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    async (err, userinfo) => {
+      if (err) {
+        // await User.updateOne(
+        //   { authorId: userinfo.authorId },
+        //   { $pull: { tokens: refreshToken } }
+        // )
+        throw new ErrorHandler(401, 'Token has expired.')
+      }
+      var user = await User.findOne({ authorId: userinfo.authorId })
+      if (user.tokens.includes(refreshToken)) {
+        var newAcessToken = routerhelper.makeAccessToken(
+          userinfo.authorId,
+          req.body.authorName
+        )
+        res.cookie('accessTokenCookie', newAcessToken)
+        res.send()
+      } else {
+        throw new ErrorHandler(401, 'Token has expired.')
+      }
+    }
+  )
+})
+
+router.get('/logout', routerhelper.authenticateToken, async function (
+  req,
+  res,
+  next
+) {
+  var refreshToken = req.cookies.refreshTokenCookie.token
+  var result = await User.updateOne(
+    { authorId: req.body.authorId },
+    { $pull: { tokens: refreshToken } }
+  )
+
+  res.clearCookie('refreshTokenCookie')
+  res.clearCookie('accessTokenCookie')
+
+  res.status(200).json({ message: 'User is logged out!' })
+})
 module.exports = router
