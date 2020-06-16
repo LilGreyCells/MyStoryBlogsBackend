@@ -46,10 +46,11 @@ router.post('/signUp', function (req, res, next) {
             { $push: { tokens: refreshToken.token } }
           )
 
-          res.status(200).send()
+          // res.status(200).send()
+          res.status(200).json(accessToken)
         })
-        .catch((e) => {
-          console.log(e)
+        .catch((err) => {
+          console.log(err)
           next(new ErrorHandler(401, 'Username is already taken'))
         })
     })
@@ -97,7 +98,8 @@ router.post('/login', async function (req, res, next) {
                 { $push: { tokens: refreshToken.token } }
               )
 
-              res.status(200).json({ message: 'User is logged in!' })
+              // res.status(200).json({ message: 'User is logged in!' })
+              res.status(200).json(accessToken)
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -115,32 +117,29 @@ router.post('/login', async function (req, res, next) {
   }
 })
 
-router.get('/profile', routerhelper.authenticateToken, async function (
-  req,
-  res,
-  next
-) {
-  // return/send username, name, bio, picture
-  var profile = {}
-  try {
-    await User.findOne(req.body)
-      .then((user) => {
-        console.log('user: ', user)
-        profile['authorName'] = user.authorName
-        profile['username'] = user.userName
-        profile['bio'] = user.bio
-        profile['myPosts'] = user.myPosts
-        console.log(profile)
-        res.json(profile)
-      })
-      .catch((err) => {
-        console.log('errrrrrooooooooooo: ', err)
-        throw new ErrorHandler(303, 'signUp')
-      })
-  } catch (err) {
-    next(err)
+router.get(
+  '/profile',
+  routerhelper.authenticateTokenWithoutCookies,
+  async function (req, res, next) {
+    // return/send username, name, bio, picture
+    var profile = {}
+    try {
+      await User.findOne(req.body)
+        .then((user) => {
+          profile['authorName'] = user.authorName
+          profile['username'] = user.userName
+          profile['bio'] = user.bio
+          profile['myPosts'] = user.myPosts
+          res.json(profile)
+        })
+        .catch((err) => {
+          throw new ErrorHandler(303, 'signUp')
+        })
+    } catch (err) {
+      next(err)
+    }
   }
-})
+)
 
 router.get('/refreshToken', function (req, res, next) {
   if (req.cookies.refreshTokenCookie == undefined) {
@@ -194,7 +193,9 @@ router.get('/logout', routerhelper.authenticateToken, async function (
   res.status(200).json({ message: 'User is logged out!' })
 })
 
-router.post('/addFriend',routerhelper.authenticateToken,async function(req,res,next){
-  
-})
+router.post('/addFriend', routerhelper.authenticateToken, async function (
+  req,
+  res,
+  next
+) {})
 module.exports = router

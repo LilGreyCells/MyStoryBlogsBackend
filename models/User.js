@@ -26,6 +26,10 @@ const UserSchema = mongoose.Schema({
     type: Array,
     require: false,
   },
+  chatSessions: {
+    type: Array,
+    require: false,
+  },
   tokens: {
     type: Array,
     require: false,

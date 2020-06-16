@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var blogcontroller = require('../controllers/Blogs')
-var postcontroller=require('../controllers/Posts')
+var postcontroller = require('../controllers/Posts')
 // var postcontroller = require()
 const { ErrorHandler } = require('../helpers/errorHandler')
 var routerhelper = require('../helpers/routerhelper')
@@ -61,13 +61,11 @@ router.delete('/', routerhelper.authenticateToken, async function (
 ) {
   try {
     blog = await blogcontroller.delete(req)
-    console.log(blog)
     if (blog.postIds && blog.postIds.length > 0) {
-      blog.postIds.forEach(async element => {
-        console.log(element)
-        let req={body:{postId:element}}
+      blog.postIds.forEach(async (element) => {
+        let req = { body: { postId: element } }
         await postcontroller.delete(req)
-      });
+      })
     }
     res.status(200).json(blog)
   } catch (err) {

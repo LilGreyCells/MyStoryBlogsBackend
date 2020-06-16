@@ -8,14 +8,15 @@ var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/user')
 var postsRouter = require('./routes/post')
 var blogsRouter = require('./routes/blogs')
+var addFriendRouter = require('./routes/addFriend')
+
 const dotenv = require('dotenv')
 dotenv.config()
 var app = express()
-var http = require('http');
+var http = require('http')
 
-
-const server = http.createServer(app);
-const io = require('socket.io')(server);
+const server = http.createServer(app)
+const io = require('socket.io')(server)
 
 var mongoose = require('mongoose')
 const { ErrorHandler } = require('./helpers/errorHandler')
@@ -23,12 +24,9 @@ const helmet = require('helmet')
 
 // Connecting to the database
 mongoose
-  .connect(
-    process.env.MONGO_DB_CONNECTION_STRING,
-    {
-      useNewUrlParser: true,
-    }
-  )
+  .connect(process.env.MONGO_DB_CONNECTION_STRING, {
+    useNewUrlParser: true,
+  })
   .then(() => {
     console.log('Connected to the Database.')
   })
@@ -53,6 +51,7 @@ app.use('/', indexRouter)
 app.use('/user', usersRouter)
 app.use('/blog', blogsRouter)
 app.use('/post', postsRouter)
+app.use('/addFriend', addFriendRouter)
 
 // error handler
 app.use((err, req, res, next) => {
@@ -60,6 +59,6 @@ app.use((err, req, res, next) => {
   err.handleError(res)
 })
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
