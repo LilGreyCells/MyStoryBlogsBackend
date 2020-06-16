@@ -193,4 +193,8 @@ router.get('/logout', routerhelper.authenticateToken, async function (
 
   res.status(200).json({ message: 'User is logged out!' })
 })
+
+router.post('/addFriend',routerhelper.authenticateToken,async function(req,res,next){
+  
+})
 module.exports = router

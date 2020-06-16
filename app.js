@@ -11,6 +11,12 @@ var blogsRouter = require('./routes/blogs')
 const dotenv = require('dotenv')
 dotenv.config()
 var app = express()
+var http = require('http');
+
+
+const server = http.createServer(app);
+const io = require('socket.io')(server);
+
 var mongoose = require('mongoose')
 const { ErrorHandler } = require('./helpers/errorHandler')
 const helmet = require('helmet')
@@ -54,4 +60,6 @@ app.use((err, req, res, next) => {
   err.handleError(res)
 })
 
-module.exports = app
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
