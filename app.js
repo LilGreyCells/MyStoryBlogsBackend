@@ -21,7 +21,8 @@ const io = require('socket.io')(server)
 var mongoose = require('mongoose')
 const { ErrorHandler } = require('./helpers/errorHandler')
 const helmet = require('helmet')
-
+const User = require('./models/User')
+const streamUser=require('./models/StreamUserModel')
 // Connecting to the database
 mongoose
   .connect(process.env.MONGO_DB_CONNECTION_STRING, {
@@ -58,6 +59,33 @@ app.use((err, req, res, next) => {
   console.log(err)
   err.handleError(res)
 })
+
+io.on("connection",socket=>{
+  socket.on('subscribe',async ({id,roomtag})=>{
+    socket.join(roomnumber)
+    socket.broadcast.to(roomnumber).emit('status','online')
+    temp=await User.findOne({authorId:id})
+    msg=temp.chatSessions[roomtag]
+
+  msg.forEach(element => {
+      socket.emit("backlog_message",element)
+    });
+  socket.emit("backlog_messages_Sent","sent")  
+    
+  })
+
+  socket.on("chat_message_online",(msg,roomnumber) =>{
+    io.to(roomnumber).emit("message",msg)
+  })
+  socket.on("chat_message_offline",async (msg,roomnumber) =>{
+    partnername=roomnumber.split("_")[1]
+    profile=await User.findOneAndUpdate({authorName:partnername},{$push:{roomtag:msg}})
+  })
+  socket.on('disconnecting',(roomnumber)=>{
+    socket.broadcast.to(roomnumber).emit('status','offline')
+  })
+})
+
 
 const PORT = process.env.PORT || 3000
 
