@@ -17,12 +17,9 @@ const helmet = require('helmet')
 
 // Connecting to the database
 mongoose
-  .connect(
-    process.env.MONGO_DB_CONNECTION_STRING,
-    {
-      useNewUrlParser: true,
-    }
-  )
+  .connect(process.env.MONGO_DB_CONNECTION_STRING, {
+    useNewUrlParser: true,
+  })
   .then(() => {
     console.log('Connected to the Database.')
   })
@@ -41,6 +38,7 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(cors({ credentials: true }))
 // app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter)
