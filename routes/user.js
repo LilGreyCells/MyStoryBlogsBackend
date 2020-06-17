@@ -33,12 +33,13 @@ router.post('/signUp', function (req, res, next) {
           )
 
           res.cookie('refreshTokenCookie', refreshToken, {
-            httpOnly: true,
-            secure: true,
+            // httpOnly: true,
+            // secure: true,
+            path: '/refreshToken',
           })
           res.cookie('accessTokenCookie', accessToken, {
-            httpOnly: true,
-            secure: true,
+            // httpOnly: true,
+            // secure: true,
           })
 
           await User.updateOne(
@@ -63,6 +64,9 @@ router.post('/login', async function (req, res, next) {
     var inputUserName = req.body.userName
     var inputPassword = req.body.password
 
+    console.log('un: ', req.body.userName)
+    console.log('p: ', req.body.password)
+
     await User.findOne({
       userName: inputUserName,
     })
@@ -84,12 +88,13 @@ router.post('/login', async function (req, res, next) {
                 profile.authorName
               )
               res.cookie('refreshTokenCookie', refreshToken, {
-                httpOnly: true,
-                secure: true,
+                // httpOnly: true,
+                // secure: true,
+                // path: '/user/refreshToken',
               })
               res.cookie('accessTokenCookie', accessToken, {
-                httpOnly: true,
-                secure: true,
+                // httpOnly: true,
+                // secure: true,
               })
 
               await User.updateOne(
@@ -134,7 +139,6 @@ router.get('/profile', routerhelper.authenticateToken, async function (
         res.json(profile)
       })
       .catch((err) => {
-        console.log('errrrrrooooooooooo: ', err)
         throw new ErrorHandler(303, 'signUp')
       })
   } catch (err) {
@@ -166,8 +170,8 @@ router.get('/refreshToken', function (req, res, next) {
         )
 
         res.cookie('accessTokenCookie', accessToken, {
-          httpOnly: true,
-          secure: true,
+          // httpOnly: true,
+          // secure: true,
         })
         res.send()
       } else {
