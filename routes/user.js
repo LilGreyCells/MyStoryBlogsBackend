@@ -166,7 +166,7 @@ router.get('/refreshToken', function (req, res, next) {
           req.body.authorName
         )
 
-        res.cookie('accessTokenCookie', accessToken, {
+        res.cookie('accessTokenCookie', newAcessToken, {
           httpOnly: true,
           secure: true,
         })
