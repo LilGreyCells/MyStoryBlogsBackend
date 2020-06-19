@@ -1,7 +1,4 @@
 var Post = require('../models/Post')
-var Blog = require('../models/Blogs')
-const { ErrorHandler } = require('../helpers/errorHandler')
-var routerhelper = require('../helpers/routerhelper')
 
 const postmethods = {
   get: (req) => {

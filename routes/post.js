@@ -4,6 +4,21 @@ var routerhelper = require('../helpers/routerhelper')
 var postcontroller = require('../controllers/Posts')
 var blogcontroller = require('../controllers/Blogs')
 const { ErrorHandler } = require('../helpers/errorHandler')
+var Post = require('../models/Post')
+
+// Get all posts from Database
+router.get('/allPosts', routerhelper.authenticateToken, async function (
+  req,
+  res,
+  next
+) {
+  try {
+    var posts = await Post.find()
+    res.json(posts)
+  } catch (err) {
+    throw new ErrorHandler(404, 'Unable to find posts!')
+  }
+})
 
 // Get Posts from Database
 router.get('/', routerhelper.authenticateToken, async function (
@@ -13,9 +28,10 @@ router.get('/', routerhelper.authenticateToken, async function (
 ) {
   try {
     var post = await postcontroller.get(req.query)
+    console.log(post)
     res.json(post)
   } catch (err) {
-    throw new ErrorHandler(404, 'Unable to find posts')
+    throw new ErrorHandler(404, 'Unable to the post!')
   }
 })
 
