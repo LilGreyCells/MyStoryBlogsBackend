@@ -47,7 +47,7 @@ router.post('/signUp', function (req, res, next) {
             { $push: { tokens: refreshToken.token } }
           )
 
-          res.status(200).send()
+          res.status(200).json({ newUser: newUser })
         })
         .catch((e) => {
           console.log(e)
@@ -99,7 +99,7 @@ router.post('/login', async function (req, res, next) {
                 { $push: { tokens: refreshToken.token } }
               )
 
-              res.status(200).json({ message: 'User is logged in!' })
+              res.status(200).json({ profile: profile })
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -125,9 +125,9 @@ router.get('/profile', routerhelper.authenticateToken, async function (
   // return/send username, name, bio, picture
   var profile = {}
   try {
+    console.log(req.body)
     await User.findOne(req.body)
       .then((user) => {
-        console.log('user: ', user)
         profile['authorName'] = user.authorName
         profile['username'] = user.userName
         profile['bio'] = user.bio
