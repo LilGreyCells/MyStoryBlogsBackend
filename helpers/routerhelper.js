@@ -46,6 +46,6 @@ var helper = {
         next(err) // pass the execution off to whatever request the client intended
       }
     })
-  },
+  }
 }
 module.exports = helper

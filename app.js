@@ -3,11 +3,12 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
-
+const bodyParser = require('body-parser');
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/user')
 var postsRouter = require('./routes/post')
 var blogsRouter = require('./routes/blogs')
+var imagesRouter= require('./routes/images')
 var cors = require('cors')
 const dotenv = require('dotenv')
 dotenv.config()
@@ -36,7 +37,8 @@ mongoose
 // app.set('view engine', 'jade')
 app.use(helmet())
 app.use(logger('dev'))
-app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(
@@ -52,7 +54,7 @@ app.use('/', indexRouter)
 app.use('/user', usersRouter)
 app.use('/blog', blogsRouter)
 app.use('/post', postsRouter)
-
+app.use('/images',imagesRouter)
 // error handler
 app.use((err, req, res, next) => {
   console.log(err)
