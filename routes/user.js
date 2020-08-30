@@ -47,7 +47,11 @@ router.post('/signUp', function (req, res, next) {
             { $push: { tokens: refreshToken.token } }
           )
 
-          res.status(200).json({ newUser: newUser })
+          res.status(200).json({
+            "authorName" : newUser.authorName,
+              "userName" : newUser.userName,
+             "bio" : newUser.bio,
+             "blogIds" :newUser.blogIds })
         })
         .catch((e) => {
           console.log(e)
