@@ -44,8 +44,8 @@ app.use(cookieParser())
 app.use(
   cors({
     credentials: true,
-    origin: 'http://localhost:3000',
-    methods: 'GET, POST, PUT, DELETE',
+    // origin: 'http://localhost:4000',
+    // methods: 'GET, POST, PUT, DELETE',
   })
 )
 // app.use(express.static(path.join(__dirname, 'public')));

@@ -25,5 +25,9 @@ const BlogSchema = mongoose.Schema({
     type: Array,
     required: false,
   },
+  blogImage:{
+    type:String,
+    required:true,
+  }
 })
 module.exports = Blog = mongoose.model('BlogSchema', BlogSchema)

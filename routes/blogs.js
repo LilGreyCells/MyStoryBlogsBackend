@@ -46,7 +46,7 @@ router.post('/', routerhelper.authenticateToken, async function (
     await result
       .then((result) => res.status(200).json(result))
       .catch((err) => {
-        throw new ErrorHandler(404, 'Missing title or description' + err)
+        throw new ErrorHandler(404, 'Missing fields' + err)
       })
   } catch (err) {
     next(new ErrorHandler(404, 'Something went wrong ' + err))
