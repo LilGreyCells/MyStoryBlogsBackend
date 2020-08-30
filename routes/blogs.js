@@ -6,7 +6,7 @@ var postcontroller=require('../controllers/Posts')
 const { ErrorHandler } = require('../helpers/errorHandler')
 var routerhelper = require('../helpers/routerhelper')
 /* GET blogs based on params. */
-router.get('/', async function (req, res, next) {
+router.get('/',routerhelper.authenticateToken, async function (req, res, next) {
   try {
     blog = await blogcontroller.get(req)
     if (!blog) {
@@ -46,7 +46,7 @@ router.post('/', routerhelper.authenticateToken, async function (
     await result
       .then((result) => res.status(200).json(result))
       .catch((err) => {
-        throw new ErrorHandler(404, 'Missing fields' + err)
+        throw new ErrorHandler(404, 'Missing title or description' + err)
       })
   } catch (err) {
     next(new ErrorHandler(404, 'Something went wrong ' + err))
