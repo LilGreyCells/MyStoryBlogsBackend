@@ -135,7 +135,7 @@ router.get('/profile', routerhelper.authenticateToken, async function (
         profile['authorName'] = user.authorName
         profile['userName'] = user.userName
         profile['bio'] = user.bio
-        profile['myBlogs'] = user.blogIds
+        profile['blogIds'] = user.blogIds
         console.log(profile)
         res.json(profile)
       })
