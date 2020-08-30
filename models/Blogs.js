@@ -21,7 +21,7 @@ const BlogSchema = mongoose.Schema({
     type: String,
     required: false,
   },
-  postIds: {
+ blogIds: {
     type: Array,
     required: false,
   },

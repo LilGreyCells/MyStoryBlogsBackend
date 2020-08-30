@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var blogcontroller = require('../controllers/Blogs')
 var postcontroller=require('../controllers/Posts')
+var User = require('../models/User')
 // var postcontroller = require()
 const { ErrorHandler } = require('../helpers/errorHandler')
 var routerhelper = require('../helpers/routerhelper')
@@ -42,17 +43,42 @@ router.post('/', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    result = blogcontroller.post(req)
-    await result
-      .then((result) => res.status(200).json(result))
-      .catch((err) => {
-        throw new ErrorHandler(404, 'Missing title or description' + err)
+    result = await blogcontroller.post(req) .catch((err) => {
+      throw new ErrorHandler(404, 'Missing title or description' + err)
+    })
+   
+    // await result
+    //   .then((result) => res.status(200).json(result))
+    //   .catch((err) => {
+    //     throw new ErrorHandler(404, 'Missing title or description' + err)
+    //   })
+      //TODO: TO REFORMAT ONCE USER CONTROLLER IS MADE
+
+      await User.updateOne(
+        { authorId: req.body.authorId },
+        { $push: { blogIds: result._id } }
+      ).catch((err) => {
+        throw new ErrorHandler(404, 'User not found while updating blog' + err)
       })
+      res.status(200).json(result)
+      ///////////////////////////////////
   } catch (err) {
     next(new ErrorHandler(404, 'Something went wrong ' + err))
   }
 })
 
+router.get('/allBlogs', routerhelper.authenticateToken, async function (
+  req,
+  res,
+  next
+) {
+  try {
+    var blogs = await Blogs.find()
+    res.json(blogs)
+  } catch (err) {
+    throw new ErrorHandler(404, 'Unable to find Blogs!')
+  }
+})
 /*DELETE the blog based on params*/
 router.delete('/', routerhelper.authenticateToken, async function (
   req,

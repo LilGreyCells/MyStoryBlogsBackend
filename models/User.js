@@ -22,7 +22,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     require: false,
   },
-  postIds: {
+  blogIds: {
     type: Array,
     require: false,
   },
