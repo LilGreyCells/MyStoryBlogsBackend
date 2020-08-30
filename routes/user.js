@@ -99,7 +99,11 @@ router.post('/login', async function (req, res, next) {
                 { $push: { tokens: refreshToken.token } }
               )
 
-              res.status(200).json({ profile: profile })
+              res.status(200).json({
+            "authorName" : profile.authorName,
+              "userName" : profile.userName,
+             "bio" : profile.bio,
+             "blogIds" :profile.blogIds })
             } else {
               throw new ErrorHandler(401, 'Incorrect Password')
             }
@@ -129,9 +133,9 @@ router.get('/profile', routerhelper.authenticateToken, async function (
     await User.findOne(req.body)
       .then((user) => {
         profile['authorName'] = user.authorName
-        profile['username'] = user.userName
+        profile['userName'] = user.userName
         profile['bio'] = user.bio
-        profile['myPosts'] = user.myPosts
+        profile['myBlogs'] = user.blogIds
         console.log(profile)
         res.json(profile)
       })
