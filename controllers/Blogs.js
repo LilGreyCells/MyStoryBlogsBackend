@@ -16,5 +16,8 @@ const blogmethods = {
   delete: async (req) => {
     return Blog.findOneAndDelete({ blogId: req.body.blogId })
   },
+  find:async  (req)=> {
+    return Blog.find()
+  }
 }
 module.exports = blogmethods

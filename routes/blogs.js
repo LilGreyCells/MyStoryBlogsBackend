@@ -73,10 +73,11 @@ router.get('/allBlogs', routerhelper.authenticateToken, async function (
   next
 ) {
   try {
-    var blogs = await Blogs.find()
+    var blogs = await blogcontroller.find()
+
     res.json(blogs)
   } catch (err) {
-    throw new ErrorHandler(404, 'Unable to find Blogs!')
+    next(new ErrorHandler(404, err))
   }
 })
 /*DELETE the blog based on params*/
