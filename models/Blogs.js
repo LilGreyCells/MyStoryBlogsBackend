@@ -21,10 +21,6 @@ const BlogSchema = mongoose.Schema({
     type: String,
     required: false,
   },
- blogIds: {
-    type: Array,
-    required: false,
-  },
   blogImage:{
     type:String,
     required:true,
